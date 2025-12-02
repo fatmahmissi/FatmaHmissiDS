@@ -1,4 +1,3 @@
-var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -8,6 +7,7 @@ var mongoose = require('mongoose');
 var cors = require('cors');
 
 // Routes
+const authRoutes = require('./src/routes/auth');
 
 
 var app = express();
@@ -16,21 +16,19 @@ var app = express();
 //  Connexion MongoDB
 // =============================
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log(" MongoDB database connected"))
-  .catch(err => console.error(" MongoDB error:", err));
-
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.error("❌ MongoDB Error:", err));
 
 // =============================
 //  Middlewares
 // =============================
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS si tu utilises Angular
 app.use(cors({
-  origin: ['http://localhost:4200'],
+  origin: ['http://localhost:4200'], // Angular
   credentials: true
 }));
 
@@ -39,25 +37,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 // =============================
 //  Routes
 // =============================
-
-
+app.use('/api/auth', authRoutes);
 
 // =============================
-//  Gestion 404
+//  Route 404 JSON
 // =============================
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
 // =============================
-//  Error Handler
+//  Error Handler JSON
 // =============================
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.status || 500);
-  res.render('error');
+app.use((err, req, res, next) => {
+  console.error("🔥 ERROR:", err.message);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server error"
+  });
 });
 
 module.exports = app;
+
