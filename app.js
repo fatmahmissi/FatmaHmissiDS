@@ -8,7 +8,7 @@ var cors = require('cors');
 
 // Routes
 const authRoutes = require('./src/routes/auth');
-
+const projetRoute = require('./src/routes/projetRoute');
 
 var app = express();
 
@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //  Routes
 // =============================
 app.use('/api/auth', authRoutes);
+app.use('/api/projets', projetRoute);
 
 // =============================
 //  Route 404 JSON
