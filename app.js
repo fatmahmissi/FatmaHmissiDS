@@ -10,7 +10,6 @@ var cors = require('cors');
 const authRoutes = require('./src/routes/auth');
 const projetRoute = require('./src/routes/projetRoute');
 const tacheRoutes = require('./src/routes/tacheRoute');
-
 var app = express();
 
 // =============================
@@ -41,7 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', authRoutes);
 app.use('/api/projets', projetRoute);
 app.use('/api/taches', tacheRoutes);  
-
 // =============================
 //  Route 404 JSON
 // =============================
